@@ -1,4 +1,5 @@
 import { showConnect, AppConfig, UserSession, openContractCall } from '@stacks/connect';
+import { StacksMainnet } from '@stacks/network';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
@@ -13,30 +14,24 @@ export const connectWallet = (): Promise<string> => {
       },
       onFinish: () => {
         const userData = userSession.loadUserData();
-        const address = userData.profile.stxAddress.mainnet;
-        resolve(address);
+        resolve(userData.profile.stxAddress.mainnet);
       },
-      onCancel: () => {
-        reject(new Error("Wallet connection cancelled."));
-      }
+      onCancel: () => reject(new Error("Connection cancelled"))
     });
   });
 };
 
-export const sendInteractionTransaction = (address: string): Promise<string> => {
+export const sendInteractionTransaction = async (address: string): Promise<string> => {
   return new Promise((resolve, reject) => {
+    const network = new StacksMainnet();
     openContractCall({
-      network: 'mainnet',
+      network,
       contractAddress: TARGET_CONTRACT_ADDRESS,
       contractName: CONTRACT_NAME,
       functionName: 'reveal-my-identity',
       functionArgs: [],
-      onFinish: (data) => {
-        resolve(data.txId);
-      },
-      onCancel: () => {
-        reject(new Error("Transaction cancelled."));
-      }
+      onFinish: (data) => resolve(data.txId),
+      onCancel: () => reject(new Error("Transaction cancelled"))
     });
   });
 };
