@@ -4,12 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stacks Pixel Identity</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/buffer/6.0.3/buffer.min.js"></script>
     <script>
-      // Fix définitif des outils Stacks
-      window.Buffer = window.Buffer || window.buffer.Buffer;
+      // Configuration d'urgence avant tout le reste
       window.global = window;
       window.process = { env: {} };
+    </script>
+    <script src="https://bundle.run/buffer@6.0.3"></script>
+    <script>
+      // On s'assure que Buffer est disponible pour Stacks
+      window.Buffer = window.Buffer || (window.buffer ? window.buffer.Buffer : null);
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
