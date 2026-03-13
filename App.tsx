@@ -11,21 +11,23 @@ const App: React.FC = () => {
   const [result, setResult] = useState<PixelArtResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const handleInteraction = async () => {
+  const handleConnect = async () => {
+    try {
+      const addr = await connectWallet();
+      setWalletAddress(addr);
+    } catch (e: any) { console.error(e); }
+  };
+
+  const handleReveal = async () => {
     try {
       setErrorMsg(null);
-      let currentAddress = walletAddress;
-      
-      if (!currentAddress) {
-        setStatus(AppStatus.CONNECTING);
-        currentAddress = await connectWallet();
-        setWalletAddress(currentAddress);
+      let addr = walletAddress;
+      if (!addr) {
+        addr = await connectWallet();
+        setWalletAddress(addr);
       }
-
       setStatus(AppStatus.INTERACTING);
-      const hash = await sendInteractionTransaction(currentAddress);
-      console.log("TX:", hash);
-      
+      await sendInteractionTransaction(addr);
       setStatus(AppStatus.GENERATING);
       const art = await generatePixelArtIdentity();
       setResult(art);
@@ -33,27 +35,69 @@ const App: React.FC = () => {
     } catch (err: any) {
       console.error("Bug:", err);
       setStatus(AppStatus.ERROR);
-      setErrorMsg(err.message || "Transaction error");
+      setErrorMsg(err.message || "Transaction failed");
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FF9900] flex flex-col font-sans text-black">
-      <header className="p-6 flex justify-between items-center">
-        <span className="font-bold text-xl italic">StacksIdentity</span>
-        {walletAddress && <div className="bg-white px-4 py-1 border-2 border-black font-bold text-xs">{walletAddress.slice(0,6)}...</div>}
+    <div className="min-h-screen bg-[#FF9900] bg-gradient-to-br from-[#FF9900] to-[#FFB347] flex flex-col font-sans text-black overflow-hidden relative">
+      <header className="w-full px-8 py-8 flex justify-between items-center z-10">
+        <div className="flex items-center gap-2">
+          <div className="flex -space-x-2">
+            <div className="w-6 h-6 rounded-full bg-black border-2 border-[#FF9900]"></div>
+            <div className="w-6 h-6 rounded-full border-2 border-black"></div>
+          </div>
+          <span className="font-bold text-xl tracking-tight">Stacks<span className="italic">Identity</span></span>
+        </div>
+        {walletAddress ? (
+          <div className="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full border border-black/10 font-bold text-xs">
+            {walletAddress.slice(0,6)}...{walletAddress.slice(-4)}
+          </div>
+        ) : (
+          <button onClick={handleConnect} className="font-bold border-b-2 border-black text-sm hover:opacity-70 transition-opacity">Connect Wallet</button>
+        )}
       </header>
-      <main className="flex-grow flex flex-col items-center justify-center p-4 text-center">
+
+      <main className="flex-grow flex flex-col items-center justify-center px-6 py-12 z-10 relative text-center">
         {status === AppStatus.SUCCESS && result ? (
           <ResultCard result={result} onReset={() => { setStatus(AppStatus.IDLE); setResult(null); }} />
         ) : (
-          <div className="space-y-8 max-w-2xl">
-            <h1 className="text-6xl md:text-8xl font-serif italic leading-none">Which Stacks are you?</h1>
-            <Button onClick={handleInteraction} isLoading={status === AppStatus.INTERACTING || status === AppStatus.GENERATING} className="text-2xl px-12 py-6">
-              {status === AppStatus.INTERACTING ? 'Signing...' : status === AppStatus.GENERATING ? 'Generating...' : 'Reveal Identity'}
-            </Button>
-            <div className="text-[10px] font-mono opacity-50 uppercase tracking-widest">Contract: {TARGET_CONTRACT_ADDRESS}</div>
-            {status === AppStatus.ERROR && <div className="p-4 bg-white border-4 border-black shadow-[8px_8px_0_0_#000] font-bold text-red-600">{errorMsg}</div>}
+          <div className="max-w-4xl w-full space-y-16">
+            <div className="space-y-6">
+              <h1 className="text-7xl md:text-[10rem] font-serif italic leading-[0.8] tracking-tighter">
+                Which <span className="not-italic">Stacks</span> <br/> are you?
+              </h1>
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 mt-12">
+                <div className="w-px h-24 bg-black hidden md:block"></div>
+                <p className="text-black font-medium text-lg md:text-xl max-w-sm text-left leading-snug">
+                  Interact with the Stacks blockchain to discover your on-chain soulmate, beautifully rendered in 8-bit.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-8">
+              <button 
+                onClick={handleReveal}
+                disabled={status === AppStatus.INTERACTING || status === AppStatus.GENERATING}
+                className="bg-black text-white px-12 py-5 rounded-full text-xl font-bold hover:scale-105 transition-transform disabled:opacity-50"
+              >
+                {status === AppStatus.INTERACTING ? 'Signing...' : status === AppStatus.GENERATING ? 'Dreaming...' : 'Reveal Identity'}
+              </button>
+              
+              <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.2em] opacity-60">
+                <span>Contract</span>
+                <span className="w-8 h-px bg-black"></span>
+                <span className="bg-white/50 px-2 py-0.5 rounded border border-black/10">{TARGET_CONTRACT_ADDRESS.slice(0,6)}...PIXEL-IDENTITY</span>
+              </div>
+            </div>
+
+            {status === AppStatus.ERROR && (
+              <div className="mt-8 p-6 bg-white border-2 border-black shadow-[6px_6px_0px_0px_#000] text-black max-w-md mx-auto">
+                <p className="font-bold text-red-600 uppercase tracking-widest text-xs mb-2">Error Detected</p>
+                <p className="font-medium">{errorMsg}</p>
+                <button onClick={() => setStatus(AppStatus.IDLE)} className="mt-4 text-xs font-bold underline">TRY AGAIN</button>
+              </div>
+            )}
           </div>
         )}
       </main>

@@ -4,15 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stacks Pixel Identity</title>
+    <script src="https://unpkg.com/buffer@6.0.3/index.js"></script>
     <script>
-      // Configuration d'urgence avant tout le reste
+      window.Buffer = window.Buffer || window.buffer.Buffer;
       window.global = window;
-      window.process = { env: {} };
-    </script>
-    <script src="https://bundle.run/buffer@6.0.3"></script>
-    <script>
-      // On s'assure que Buffer est disponible pour Stacks
-      window.Buffer = window.Buffer || (window.buffer ? window.buffer.Buffer : null);
+      window.process = { env: { NODE_ENV: 'production' } };
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
