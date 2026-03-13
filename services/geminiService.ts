@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { CRYPTO_PERSONAS, PixelArtResult } from '../types';
 
-export const generatePixelArtIdentity = async (): Promise<pixelartresult> => {
+export const generatePixelArtIdentity = async (): Promise<PixelArtResult> => {
   if (!process.env.API_KEY) {
     throw new Error("API Key is missing.");
   }
