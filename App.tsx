@@ -6,10 +6,10 @@ import Button from './components/Button';
 import ResultCard from './components/ResultCard';
 
 const App: React.FC = () => {
-  const [status, setStatus] = useState<appstatus>(AppStatus.IDLE);
-  const [walletAddress, setWalletAddress] = useState<string |="" null="">(null);
-  const [result, setResult] = useState<pixelartresult |="" null="">(null);
-  const [errorMsg, setErrorMsg] = useState<string |="" null="">(null);
+  const [status, setStatus] = useState<AppStatus>(AppStatus.IDLE);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [result, setResult] = useState<PixelArtResult | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleConnect = () => {
     setStatus(AppStatus.CONNECTING);
