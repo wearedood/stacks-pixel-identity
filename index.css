@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom pixelated image utility */
+.pixelated-image {
+  image-rendering: pixelated;
+}
