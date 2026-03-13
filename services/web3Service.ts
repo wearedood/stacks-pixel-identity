@@ -1,9 +1,12 @@
-// ON IMPORTE TOUT D'UN COUP (Plus d'erreur d'import introuvable)
-import * as StacksConnect from '@stacks/connect';
+import * as StacksConnectNamespace from '@stacks/connect';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
-const appConfig = new StacksConnect.AppConfig(['store_write', 'publish_data']);
-export const userSession = new StacksConnect.UserSession({ appConfig });
+// Technique de sioux pour contrer le bug d'import de Vite
+const Connect: any = (StacksConnectNamespace as any).default || StacksConnectNamespace;
+const { showConnect, openContractCall, AppConfig, UserSession } = Connect;
+
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+export const userSession = new UserSession({ appConfig });
 
 const appDetails = {
   name: 'Stacks Identity',
@@ -12,21 +15,24 @@ const appDetails = {
 
 export const connectWallet = (): Promise<string> => {
   return new Promise((resolve, reject) => {
-    StacksConnect.showConnect({
+    if (typeof showConnect !== 'function') {
+      return reject(new Error("Stacks Connect not loaded properly"));
+    }
+    showConnect({
       userSession,
       appDetails,
       onFinish: () => {
         const userData = userSession.loadUserData();
         resolve(userData.profile.stxAddress.mainnet);
       },
-      onCancel: () => reject(new Error("Wallet connection cancelled"))
+      onCancel: () => reject(new Error("Canceled"))
     });
   });
 };
 
 export const sendInteractionTransaction = async (address: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    StacksConnect.openContractCall({
+    openContractCall({
       network: 'mainnet',
       appDetails,
       contractAddress: TARGET_CONTRACT_ADDRESS,
@@ -34,7 +40,7 @@ export const sendInteractionTransaction = async (address: string): Promise<strin
       functionName: 'reveal-my-identity',
       functionArgs: [],
       onFinish: (data: any) => resolve(data.txId),
-      onCancel: () => reject(new Error("Transaction cancelled"))
+      onCancel: () => reject(new Error("Canceled"))
     });
   });
 };

@@ -6,6 +6,16 @@ export default defineConfig({
   plugins: [react(), nodePolyfills()],
   build: {
     minify: false,
-    target: 'esnext'
+    cssMinify: false,
+    target: 'esnext',
+    rollupOptions: {
+      output: {
+        // On empêche le renommage des fonctions critiques
+        manualChunks: undefined,
+      }
+    }
+  },
+  optimizeDeps: {
+    include: ['@stacks/connect', '@stacks/network', '@stacks/transactions']
   }
 })
