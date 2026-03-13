@@ -1,17 +1,23 @@
-import { showConnect, openContractCall, AppConfig, UserSession } from '@stacks/connect';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-export const userSession = new UserSession({ appConfig });
+// On va chercher la version propre du script HTML
+const getStacks = () => (window as any).StacksConnect;
+
+export const userSession = new (getStacks().UserSession)({
+  appConfig: new (getStacks().AppConfig)(['store_write', 'publish_data'])
+});
 
 const appDetails = {
   name: 'Stacks Identity',
   icon: window.location.origin + '/favicon.ico',
 };
 
-export const connectWallet = async (): Promise<string> => {
+export const connectWallet = (): Promise<string> => {
   return new Promise((resolve, reject) => {
-    showConnect({
+    const lib = getStacks();
+    if (!lib) return reject(new Error("Stacks Library not ready yet, wait 2 sec"));
+    
+    lib.showConnect({
       userSession,
       appDetails,
       onFinish: () => {
@@ -25,7 +31,7 @@ export const connectWallet = async (): Promise<string> => {
 
 export const sendInteractionTransaction = async (address: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    openContractCall({
+    getStacks().openContractCall({
       network: 'mainnet',
       appDetails,
       contractAddress: TARGET_CONTRACT_ADDRESS,
