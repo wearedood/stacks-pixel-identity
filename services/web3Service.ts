@@ -1,20 +1,17 @@
+import { showConnect, openContractCall, AppConfig, UserSession } from '@stacks/connect';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
-// On récupère la librairie chargée par le script HTML
-const getStacks = () => (window as any).StacksConnect;
-
-export const userSession = new (getStacks().UserSession)({
-  appConfig: new (getStacks().AppConfig)(['store_write', 'publish_data'])
-});
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+export const userSession = new UserSession({ appConfig });
 
 const appDetails = {
   name: 'Stacks Identity',
   icon: window.location.origin + '/favicon.ico',
 };
 
-export const connectWallet = (): Promise<string> => {
+export const connectWallet = async (): Promise<string> => {
   return new Promise((resolve, reject) => {
-    getStacks().showConnect({
+    showConnect({
       userSession,
       appDetails,
       onFinish: () => {
@@ -28,7 +25,7 @@ export const connectWallet = (): Promise<string> => {
 
 export const sendInteractionTransaction = async (address: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    getStacks().openContractCall({
+    openContractCall({
       network: 'mainnet',
       appDetails,
       contractAddress: TARGET_CONTRACT_ADDRESS,
