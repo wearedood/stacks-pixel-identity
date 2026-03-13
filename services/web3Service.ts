@@ -1,12 +1,11 @@
-import * as StacksConnectNamespace from '@stacks/connect';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
-// Technique de sioux pour contrer le bug d'import de Vite
-const Connect: any = (StacksConnectNamespace as any).default || StacksConnectNamespace;
-const { showConnect, openContractCall, AppConfig, UserSession } = Connect;
+// On récupère la librairie chargée par le script HTML
+const getStacks = () => (window as any).StacksConnect;
 
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-export const userSession = new UserSession({ appConfig });
+export const userSession = new (getStacks().UserSession)({
+  appConfig: new (getStacks().AppConfig)(['store_write', 'publish_data'])
+});
 
 const appDetails = {
   name: 'Stacks Identity',
@@ -15,10 +14,7 @@ const appDetails = {
 
 export const connectWallet = (): Promise<string> => {
   return new Promise((resolve, reject) => {
-    if (typeof showConnect !== 'function') {
-      return reject(new Error("Stacks Connect not loaded properly"));
-    }
-    showConnect({
+    getStacks().showConnect({
       userSession,
       appDetails,
       onFinish: () => {
@@ -32,7 +28,7 @@ export const connectWallet = (): Promise<string> => {
 
 export const sendInteractionTransaction = async (address: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    openContractCall({
+    getStacks().openContractCall({
       network: 'mainnet',
       appDetails,
       contractAddress: TARGET_CONTRACT_ADDRESS,
