@@ -1,8 +1,9 @@
-import { showConnect, AppConfig, UserSession, openContractCall } from '@stacks/connect';
+// ON IMPORTE TOUT D'UN COUP (Plus d'erreur d'import introuvable)
+import * as StacksConnect from '@stacks/connect';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-export const userSession = new UserSession({ appConfig });
+const appConfig = new StacksConnect.AppConfig(['store_write', 'publish_data']);
+export const userSession = new StacksConnect.UserSession({ appConfig });
 
 const appDetails = {
   name: 'Stacks Identity',
@@ -11,9 +12,9 @@ const appDetails = {
 
 export const connectWallet = (): Promise<string> => {
   return new Promise((resolve, reject) => {
-    showConnect({
-      userSession, // LE FIX EST LÀ
-      appDetails,  // ET LÀ
+    StacksConnect.showConnect({
+      userSession,
+      appDetails,
       onFinish: () => {
         const userData = userSession.loadUserData();
         resolve(userData.profile.stxAddress.mainnet);
@@ -25,8 +26,9 @@ export const connectWallet = (): Promise<string> => {
 
 export const sendInteractionTransaction = async (address: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    openContractCall({
-      appDetails, // LE FIX EST LÀ AUSSI
+    StacksConnect.openContractCall({
+      network: 'mainnet',
+      appDetails,
       contractAddress: TARGET_CONTRACT_ADDRESS,
       contractName: CONTRACT_NAME,
       functionName: 'reveal-my-identity',
