@@ -1,5 +1,4 @@
 import { showConnect, AppConfig, UserSession, openContractCall } from '@stacks/connect';
-import { StacksMainnet } from '@stacks/network';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
@@ -23,9 +22,8 @@ export const connectWallet = (): Promise<string> => {
 
 export const sendInteractionTransaction = async (address: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    const network = new StacksMainnet();
     openContractCall({
-      network,
+      network: 'mainnet',
       contractAddress: TARGET_CONTRACT_ADDRESS,
       contractName: CONTRACT_NAME,
       functionName: 'reveal-my-identity',
