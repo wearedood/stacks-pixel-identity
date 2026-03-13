@@ -4,18 +4,21 @@ import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 export const userSession = new UserSession({ appConfig });
 
+const appDetails = {
+  name: 'Stacks Identity',
+  icon: window.location.origin + '/favicon.ico',
+};
+
 export const connectWallet = (): Promise<string> => {
   return new Promise((resolve, reject) => {
     showConnect({
-      appDetails: {
-        name: 'Stacks Pixel Identity',
-        icon: window.location.origin + '/favicon.ico',
-      },
+      userSession, // LE FIX EST LÀ
+      appDetails,  // ET LÀ
       onFinish: () => {
         const userData = userSession.loadUserData();
         resolve(userData.profile.stxAddress.mainnet);
       },
-      onCancel: () => reject(new Error("Connection cancelled"))
+      onCancel: () => reject(new Error("Wallet connection cancelled"))
     });
   });
 };
@@ -23,12 +26,12 @@ export const connectWallet = (): Promise<string> => {
 export const sendInteractionTransaction = async (address: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     openContractCall({
-      network: 'mainnet',
+      appDetails, // LE FIX EST LÀ AUSSI
       contractAddress: TARGET_CONTRACT_ADDRESS,
       contractName: CONTRACT_NAME,
       functionName: 'reveal-my-identity',
       functionArgs: [],
-      onFinish: (data) => resolve(data.txId),
+      onFinish: (data: any) => resolve(data.txId),
       onCancel: () => reject(new Error("Transaction cancelled"))
     });
   });
