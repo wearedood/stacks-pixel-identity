@@ -1,5 +1,4 @@
 import { showConnect, AppConfig, UserSession, openContractCall } from '@stacks/connect';
-import { StacksMainnet } from '@stacks/network';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
@@ -12,7 +11,6 @@ export const connectWallet = (): Promise<string> => {
         name: 'Stacks Pixel Identity',
         icon: window.location.origin + '/favicon.ico',
       },
-      redirectTo: '/',
       onFinish: () => {
         const userData = userSession.loadUserData();
         const address = userData.profile.stxAddress.mainnet;
@@ -28,7 +26,7 @@ export const connectWallet = (): Promise<string> => {
 export const sendInteractionTransaction = (address: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     openContractCall({
-      network: new StacksMainnet(),
+      network: 'mainnet',
       contractAddress: TARGET_CONTRACT_ADDRESS,
       contractName: CONTRACT_NAME,
       functionName: 'reveal-my-identity',
