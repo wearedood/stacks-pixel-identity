@@ -1,55 +1,44 @@
-import * as StacksConnect from '@stacks/connect';
-import { STACKS_MAINNET } from '@stacks/network';
-import { AnchorMode, PostConditionMode } from '@stacks/transactions';
-import { TARGET_CONTRACT_ADDRESS, TARGET_CONTRACT_NAME } from '../types';
+import { showConnect, AppConfig, UserSession, openContractCall } from '@stacks/connect';
+import { StacksMainnet } from '@stacks/network';
+import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
-const network = STACKS_MAINNET;
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+export const userSession = new UserSession({ appConfig });
 
-export const connectWallet = (onFinish: (address: string) => void): void => {
-  // Try showConnect, then authenticate as fallback
-  const connectFn = StacksConnect.showConnect || (StacksConnect as any).authenticate;
-  
-  if (typeof connectFn !== 'function') {
-    console.error('Stacks Connect: showConnect is not a function', StacksConnect);
-    return;
-  }
-
-  connectFn({
-    appDetails: {
-      name: 'Stacks Pixel Identity',
-      icon: window.location.origin + '/favicon.ico',
-    },
-    onFinish: (payload: any) => {
-      const userData = payload.userSession.loadUserData();
-      onFinish(userData.profile.stxAddress.mainnet);
-    },
-    onCancel: () => {
-      console.log('User cancelled login');
-    },
+export const connectWallet = (): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    showConnect({
+      appDetails: {
+        name: 'Stacks Pixel Identity',
+        icon: window.location.origin + '/favicon.ico',
+      },
+      redirectTo: '/',
+      onFinish: () => {
+        const userData = userSession.loadUserData();
+        const address = userData.profile.stxAddress.mainnet;
+        resolve(address);
+      },
+      onCancel: () => {
+        reject(new Error("Wallet connection cancelled."));
+      }
+    });
   });
 };
 
-export const sendInteractionTransaction = async (onFinish: (txId: string) => void, onCancel: () => void): Promise<void> => {
-  const callFn = StacksConnect.openContractCall || (StacksConnect as any).showContractCall;
-  
-  if (typeof callFn !== 'function') {
-    console.error('Stacks Connect: openContractCall is not a function', StacksConnect);
-    return;
-  }
-
-  await callFn({
-    network,
-    contractAddress: TARGET_CONTRACT_ADDRESS,
-    contractName: TARGET_CONTRACT_NAME,
-    functionName: 'reveal-my-identity',
-    functionArgs: [],
-    anchorMode: AnchorMode.Any,
-    postConditionMode: PostConditionMode.Allow,
-    onFinish: (data: any) => {
-      onFinish(data.txId);
-    },
-    onCancel: () => {
-      onCancel();
-    },
+export const sendInteractionTransaction = (address: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network: new StacksMainnet(),
+      contractAddress: TARGET_CONTRACT_ADDRESS,
+      contractName: CONTRACT_NAME,
+      functionName: 'reveal-my-identity',
+      functionArgs: [],
+      onFinish: (data) => {
+        resolve(data.txId);
+      },
+      onCancel: () => {
+        reject(new Error("Transaction cancelled."));
+      }
+    });
   });
 };
