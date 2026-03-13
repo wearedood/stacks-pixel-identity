@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stacks Pixel Identity</title>
-    <script src="https://unpkg.com/buffer@6.0.3/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/buffer/6.0.3/buffer.min.js"></script>
     <script>
-      window.Buffer = window.Buffer || window.buffer.Buffer;
       window.global = window;
       window.process = { env: { NODE_ENV: 'production' } };
+      window.Buffer = window.buffer.Buffer;
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
