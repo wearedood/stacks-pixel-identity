@@ -17,4 +17,4 @@ function connectWallet() {
       console.log('User cancelled');
     },
   });
-}
+}export default App;
