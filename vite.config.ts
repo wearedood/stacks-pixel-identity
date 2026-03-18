@@ -6,10 +6,11 @@ export default defineConfig({
   base: '/stacks-pixel-identity/',
   plugins: [
     react(),
-    nodePolyfills({
-      globals: { Buffer: true, global: true, process: true },
-    }),
+    nodePolyfills(),
   ],
+  define: {
+    global: 'window',
+  },
   build: {
     minify: false,
     target: 'esnext'
