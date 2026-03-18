@@ -1,39 +1,29 @@
-import * as StacksConnect from '@stacks/connect';
+import { request } from '@stacks/connect';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
-const appConfig = new StacksConnect.AppConfig(['store_write', 'publish_data']);
-export const userSession = new StacksConnect.UserSession({ appConfig });
-
-const appDetails = {
-  name: 'Stacks Identity',
-  icon: window.location.origin + '/favicon.ico',
-};
-
-export const connectWallet = (): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    StacksConnect.showConnect({
-      userSession,
-      appDetails,
-      onFinish: () => {
-        const userData = userSession.loadUserData();
-        resolve(userData.profile.stxAddress.mainnet);
-      },
-      onCancel: () => reject(new Error("Canceled"))
-    });
-  });
+export const connectWallet = async (): Promise<string> => {
+  const response = await request('getAddresses');
+  const stxAddress = response.addresses.stx[0].address;
+  return stxAddress;
 };
 
 export const sendInteractionTransaction = async (): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    StacksConnect.openContractCall({
-      network: 'mainnet',
-      appDetails,
-      contractAddress: TARGET_CONTRACT_ADDRESS,
-      contractName: CONTRACT_NAME,
-      functionName: 'reveal-my-identity',
-      functionArgs: [],
-      onFinish: (data: any) => resolve(data.txId),
-      onCancel: () => reject(new Error("Canceled"))
-    });
+  const response = await request('stx_callContract', {
+    contract: `${TARGET_CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
+    functionName: 'reveal-my-identity',
+    functionArgs: [],
+    network: 'mainnet',
   });
+  return response.txid;
 };
+```
+
+Save the file (Cmd+S).
+
+---
+
+## Step 3 — Push to GitHub
+
+Back in Terminal:
+```
+git add - A && git commit - m "fix: update to stacks connect v8 API" && git push
