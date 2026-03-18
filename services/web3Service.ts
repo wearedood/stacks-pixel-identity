@@ -1,8 +1,8 @@
-import { AppConfig, UserSession, showConnect, openContractCall } from '@stacks/connect';
+import * as StacksConnect from '@stacks/connect';
 import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-export const userSession = new UserSession({ appConfig });
+const appConfig = new StacksConnect.AppConfig(['store_write', 'publish_data']);
+export const userSession = new StacksConnect.UserSession({ appConfig });
 
 const appDetails = {
   name: 'Stacks Identity',
@@ -11,7 +11,7 @@ const appDetails = {
 
 export const connectWallet = (): Promise<string> => {
   return new Promise((resolve, reject) => {
-    showConnect({
+    StacksConnect.showConnect({
       userSession,
       appDetails,
       onFinish: () => {
@@ -25,7 +25,7 @@ export const connectWallet = (): Promise<string> => {
 
 export const sendInteractionTransaction = async (): Promise<string> => {
   return new Promise((resolve, reject) => {
-    openContractCall({
+    StacksConnect.openContractCall({
       network: 'mainnet',
       appDetails,
       contractAddress: TARGET_CONTRACT_ADDRESS,
