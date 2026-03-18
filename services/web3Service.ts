@@ -3,11 +3,12 @@ import { TARGET_CONTRACT_ADDRESS, CONTRACT_NAME } from '../types';
 
 export const connectWallet = async (): Promise<string> => {
   const response = await request('getAddresses');
-  const stxAddress = response.addresses.stx[0].address;
-  return stxAddress;
+  const stxAccount = response.addresses.find((a: any) => a.symbol === 'STX');
+  if (!stxAccount) throw new Error('No STX address found');
+  return stxAccount.address;
 };
 
-export const sendInteractionTransaction = async (): Promise<string> => {
+export const sendInteractionTransaction = async (address: string): Promise<string> => {
   const response = await request('stx_callContract', {
     contract: `${TARGET_CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
     functionName: 'reveal-my-identity',
