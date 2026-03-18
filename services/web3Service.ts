@@ -16,14 +16,3 @@ export const sendInteractionTransaction = async (): Promise<string> => {
   });
   return response.txid;
 };
-```
-
-Save the file (Cmd+S).
-
----
-
-## Step 3 — Push to GitHub
-
-Back in Terminal:
-```
-git add - A && git commit - m "fix: update to stacks connect v8 API" && git push

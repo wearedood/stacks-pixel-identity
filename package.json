@@ -12,6 +12,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@google/genai": "^1.46.0",
     "@stacks/connect": "^8.2.6",
     "@stacks/network": "^6.5.1",
     "@stacks/transactions": "^6.5.1",
