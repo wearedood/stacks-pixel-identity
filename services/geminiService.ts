@@ -2,17 +2,16 @@ import { GoogleGenAI } from "@google/genai";
 import { CRYPTO_PERSONAS, PixelArtResult } from '../types';
 
 export const generatePixelArtIdentity = async (): Promise<PixelArtResult> => {
-  if (!process.env.API_KEY) {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
     throw new Error("API Key is missing.");
   }
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey });
   
-  // 1. Select a random persona
   const randomIndex = Math.floor(Math.random() * CRYPTO_PERSONAS.length);
   const selectedPersona = CRYPTO_PERSONAS[randomIndex];
 
-  // 2. Generate Image
   const prompt = `Generate a high-quality, 8-bit pixel art icon representing a "Bitcoin Cyber-Identity" based on the persona "${selectedPersona.name}". 
   The character should be a futuristic fusion of a cybernetic entity and a Bitcoin miner.
   Use a strict color palette of Bitcoin Orange (#FF9900), Pure Black (#000000), and Pure White (#FFFFFF).
@@ -23,34 +22,22 @@ export const generatePixelArtIdentity = async (): Promise<PixelArtResult> => {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      contents: {
-        parts: [
-          { text: prompt }
-        ]
-      },
-      config: {
-        imageConfig: {
-            aspectRatio: "1:1"
-        }
-      }
+      contents: { parts: [{ text: prompt }] },
+      config: { imageConfig: { aspectRatio: "1:1" } }
     });
 
-    // Extract image
     let imageUrl = '';
-    // The response might be complex, we iterate to find the inline data
     if (response.candidates && response.candidates.length > 0) {
-        const parts = response.candidates[0].content.parts;
-        for (const part of parts) {
-            if (part.inlineData && part.inlineData.data) {
-                imageUrl = `data:image/png;base64,${part.inlineData.data}`;
-                break;
-            }
+      const parts = response.candidates[0].content.parts;
+      for (const part of parts) {
+        if (part.inlineData && part.inlineData.data) {
+          imageUrl = `data:image/png;base64,${part.inlineData.data}`;
+          break;
         }
+      }
     }
 
-    if (!imageUrl) {
-        throw new Error("No image generated.");
-    }
+    if (!imageUrl) throw new Error("No image generated.");
 
     return {
       cryptoName: selectedPersona.name,
