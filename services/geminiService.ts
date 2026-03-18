@@ -13,23 +13,11 @@ export const generatePixelArtIdentity = async (): Promise<PixelArtResult> => {
   if (!response.ok) throw new Error('Failed to generate identity');
 
   const data = await response.json() as any;
-
-  let imageUrl = '';
-  if (data.candidates && data.candidates.length > 0) {
-    const parts = data.candidates[0].content.parts;
-    for (const part of parts) {
-      if (part.inlineData && part.inlineData.data) {
-        imageUrl = `data:image/png;base64,${part.inlineData.data}`;
-        break;
-      }
-    }
-  }
-
-  if (!imageUrl) throw new Error('No image generated.');
+  if (!data.imageUrl) throw new Error('No image generated.');
 
   return {
     cryptoName: selectedPersona.name,
     trait: selectedPersona.trait,
-    imageUrl: imageUrl
+    imageUrl: data.imageUrl
   };
 };
