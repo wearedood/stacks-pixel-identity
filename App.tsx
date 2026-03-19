@@ -77,7 +77,7 @@ const App: React.FC = () => {
               <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.2em] opacity-60">
                 <span>Contract</span>
                 <span className="w-8 h-px bg-black"></span>
-                <span className="bg-white/50 px-2 py-0.5 rounded border border-black/10">{TARGET_CONTRACT_ADDRESS.slice(0,6)}...PIXEL-IDENTITY</span>
+                <a href="https://explorer.hiro.so/txid/SP1GVG84HRYCBYEW59M0S4XGQF8TTVXRF8XNXGBMH.pixel-identity?chain=mainnet" target="_blank" rel="noreferrer" className="bg-white/50 px-2 py-0.5 rounded border border-black/10 hover:opacity-70 transition-opacity">{TARGET_CONTRACT_ADDRESS.slice(0,6)}...PIXEL-IDENTITY</a>
               </div>
             </div>
             {status === AppStatus.ERROR && (
