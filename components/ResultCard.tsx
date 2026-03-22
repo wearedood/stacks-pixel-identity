@@ -11,11 +11,11 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
   const appUrl = 'https://stacks-pixel-identity.vercel.app';
 
   const xShareText = encodeURIComponent(
-    `Just discovered my on-chain identity on @Stacks ⚡\n\n${result.title ? result.title + ' — ' : ''}8-bit pixel art generated from my wallet on the Bitcoin layer.\n\nBuilt for the @StacksBuilder Rewards challenge 🧱\n\nFind yours 👇\n${appUrl}\n\n#Stacks #Bitcoin #Web3 #PixelArt`
+    `Just discovered my on-chain identity on @Stacks ⚡\n\n${result.cryptoName} — 8-bit pixel art generated from my wallet on the Bitcoin layer.\n\nBuilt for the @StacksBuilder Rewards challenge 🧱\n\nFind yours 👇\n${appUrl}\n\n#Stacks #Bitcoin #Web3 #PixelArt`
   );
 
   const castShareText = encodeURIComponent(
-    `Just discovered my on-chain identity on @stacks.btc ⚡\n\n${result.title ? result.title + ' — ' : ''}8-bit pixel art generated from my wallet on the Bitcoin layer.\n\nBuilt for the Stacks Builder Rewards challenge by @ddtrvlr\n\nFind yours 👇\n${appUrl}`
+    `Just discovered my on-chain identity on @stacks.btc ⚡\n\n${result.cryptoName} — 8-bit pixel art generated from my wallet on the Bitcoin layer.\n\nBuilt for the Stacks Builder Rewards challenge by @ddtrvlr\n\nFind yours 👇\n${appUrl}`
   );
 
   const xUrl = `https://twitter.com/intent/tweet?text=${xShareText}`;
@@ -26,7 +26,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
     try {
       const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(cardRef.current, {
-        backgroundColor: null,
+        backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
         allowTaint: true,
@@ -64,12 +64,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
 
         {/* Title & subtitle */}
         <div className="text-center px-6 pb-6">
-          {result.title && (
-            <h2 className="text-3xl font-black tracking-tight">{result.title}</h2>
-          )}
-          {result.description && (
-            <p className="font-mono uppercase tracking-[0.2em] text-xs opacity-50 mt-1">{result.description}</p>
-          )}
+          <h2 className="text-3xl font-black tracking-tight">{result.cryptoName}</h2>
+          <p className="font-mono uppercase tracking-[0.2em] text-xs opacity-50 mt-1">{result.trait}</p>
         </div>
 
         {/* Buttons inside card */}
