@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { PixelArtResult } from '../types';
 
 interface ResultCardProps {
@@ -7,6 +7,7 @@ interface ResultCardProps {
 }
 
 const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
   const appUrl = 'https://stacks-pixel-identity.vercel.app';
 
   const xShareText = encodeURIComponent(
@@ -20,19 +21,34 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
   const xUrl = `https://twitter.com/intent/tweet?text=${xShareText}`;
   const castUrl = `https://warpcast.com/~/compose?text=${castShareText}`;
 
-  const handleSave = () => {
-    if (!result.imageUrl) return;
-    const link = document.createElement('a');
-    link.href = result.imageUrl;
-    link.download = 'stacks-pixel-identity.png';
-    link.click();
+  const handleSave = async () => {
+    if (!cardRef.current) return;
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(cardRef.current, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+      });
+      const link = document.createElement('a');
+      link.download = 'stacks-pixel-identity.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e) {
+      if (!result.imageUrl) return;
+      const link = document.createElement('a');
+      link.href = result.imageUrl;
+      link.download = 'stacks-pixel-identity.png';
+      link.click();
+    }
   };
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
 
-      {/* Card — original framed design */}
-      <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] w-full">
+      {/* Card — capturable area */}
+      <div ref={cardRef} className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] w-full">
 
         {/* Image with inner frame */}
         {result.imageUrl && (
