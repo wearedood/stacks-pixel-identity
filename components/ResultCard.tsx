@@ -51,7 +51,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
       <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] w-full">
 
         {/* ↓ Only this part gets saved as the image */}
-        <div ref={cardImageRef} className="bg-white">
+        <div ref={cardImageRef} className="bg-white p-4 pb-0">
           {/* Image with inner frame */}
           {result.imageUrl && (
             <div className="m-4 border-4 border-black">
