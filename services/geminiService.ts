@@ -4,7 +4,7 @@ export const generatePixelArtIdentity = async (): Promise<PixelArtResult> => {
   const randomIndex = Math.floor(Math.random() * CRYPTO_PERSONAS.length);
   const selectedPersona = CRYPTO_PERSONAS[randomIndex];
 
-  const response = await fetch('https://gemini-proxy.wearedood.workers.dev', {
+  const response = await fetch('https://pixel-identity-proxy.wearedood.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ persona: selectedPersona.name })
