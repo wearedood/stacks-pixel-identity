@@ -7,7 +7,7 @@ interface ResultCardProps {
 }
 
 const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardImageRef = useRef<HTMLDivElement>(null);
   const appUrl = 'https://stacks-pixel-identity.vercel.app';
 
   const xShareText = encodeURIComponent(
@@ -22,10 +22,10 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
   const castUrl = `https://warpcast.com/~/compose?text=${castShareText}`;
 
   const handleSave = async () => {
-    if (!cardRef.current) return;
+    if (!cardImageRef.current) return;
     try {
       const html2canvas = (await import('html2canvas')).default;
-      const canvas = await html2canvas(cardRef.current, {
+      const canvas = await html2canvas(cardImageRef.current, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
@@ -47,28 +47,32 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
 
-      {/* Card — capturable area */}
-      <div ref={cardRef} className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] w-full">
+      {/* Outer card shell */}
+      <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] w-full">
 
-        {/* Image with inner frame */}
-        {result.imageUrl && (
-          <div className="m-4 border-4 border-black">
-            <img
-              src={result.imageUrl}
-              alt="Your Pixel Art Identity"
-              className="w-full object-contain"
-              style={{ imageRendering: 'pixelated', display: 'block' }}
-            />
+        {/* ↓ Only this part gets saved as the image */}
+        <div ref={cardImageRef} className="bg-white">
+          {/* Image with inner frame */}
+          {result.imageUrl && (
+            <div className="m-4 border-4 border-black">
+              <img
+                src={result.imageUrl}
+                alt="Your Pixel Art Identity"
+                className="w-full object-contain"
+                style={{ imageRendering: 'pixelated', display: 'block' }}
+              />
+            </div>
+          )}
+
+          {/* Title & subtitle */}
+          <div className="text-center px-6 pb-6">
+            <h2 className="text-3xl font-black tracking-tight">{result.cryptoName}</h2>
+            <p className="font-mono uppercase tracking-[0.2em] text-xs opacity-50 mt-1">{result.trait}</p>
           </div>
-        )}
-
-        {/* Title & subtitle */}
-        <div className="text-center px-6 pb-6">
-          <h2 className="text-3xl font-black tracking-tight">{result.cryptoName}</h2>
-          <p className="font-mono uppercase tracking-[0.2em] text-xs opacity-50 mt-1">{result.trait}</p>
         </div>
+        {/* ↑ End of saved area */}
 
-        {/* Buttons inside card */}
+        {/* Buttons — NOT included in saved image */}
         <div className="flex border-t-4 border-black">
           <button
             onClick={handleSave}
