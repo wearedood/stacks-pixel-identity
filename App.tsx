@@ -39,10 +39,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-[#FF9900] bg-gradient-to-br from-[#FF9900] to-[#FFB347] flex flex-col font-sans text-black overflow-hidden relative">
       <header className="w-full px-8 py-8 flex justify-between items-center z-10">
         <div className="flex items-center gap-2">
-          <div className="flex -space-x-2">
-            <div className="w-6 h-6 rounded-full bg-black border-2 border-[#FF9900]"></div>
-            <div className="w-6 h-6 rounded-full border-2 border-black"></div>
-          </div>
+          <img src="/logo.png" alt="Stacks Identity Logo" className="w-10 h-10 object-contain" style={{ imageRendering: 'pixelated' }} />
           <span className="font-bold text-xl tracking-tight">Stacks<span className="italic">Identity</span></span>
         </div>
         {walletAddress ? (
