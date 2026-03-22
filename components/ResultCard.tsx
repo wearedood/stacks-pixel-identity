@@ -29,70 +29,73 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 max-w-lg w-full mx-auto">
-      {/* Identity Card */}
-      <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] w-full p-6 space-y-4">
-        <div className="text-center">
-          <p className="font-mono uppercase tracking-[0.2em] text-xs opacity-50 mb-1">Your On-Chain Identity</p>
-          {result.title && (
-            <h2 className="text-2xl font-bold font-serif italic">{result.title}</h2>
-          )}
-        </div>
+    <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
 
+      {/* Card — original framed design */}
+      <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] w-full">
+
+        {/* Image with inner frame */}
         {result.imageUrl && (
-          <div className="flex justify-center">
+          <div className="m-4 border-4 border-black">
             <img
               src={result.imageUrl}
               alt="Your Pixel Art Identity"
-              className="w-64 h-64 object-contain border-2 border-black image-rendering-pixelated"
-              style={{ imageRendering: 'pixelated' }}
+              className="w-full object-contain"
+              style={{ imageRendering: 'pixelated', display: 'block' }}
             />
           </div>
         )}
 
-        {result.description && (
-          <p className="text-sm text-center leading-relaxed opacity-80">{result.description}</p>
-        )}
+        {/* Title & subtitle */}
+        <div className="text-center px-6 pb-6">
+          {result.title && (
+            <h2 className="text-3xl font-black tracking-tight">{result.title}</h2>
+          )}
+          {result.description && (
+            <p className="font-mono uppercase tracking-[0.2em] text-xs opacity-50 mt-1">{result.description}</p>
+          )}
+        </div>
+
+        {/* Buttons inside card */}
+        <div className="flex border-t-4 border-black">
+          <button
+            onClick={handleSave}
+            className="flex-1 py-4 font-bold text-xs uppercase tracking-widest border-r-2 border-black hover:bg-black hover:text-white transition-colors"
+          >
+            Save Card
+          </button>
+          <a
+            href={xUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex-1 py-4 font-bold text-xs uppercase tracking-widest border-r-2 border-black hover:bg-black hover:text-white transition-colors text-center"
+          >
+            Post
+          </a>
+          <a
+            href={castUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex-1 py-4 font-bold text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-colors text-center"
+          >
+            Cast
+          </a>
+        </div>
+
+        {/* Tip */}
+        <p className="text-center text-xs opacity-40 py-3 border-t-2 border-black/10">
+          Tip: Save the card image to attach it to your post!
+        </p>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3 w-full">
-        {/* Save */}
-        <button
-          onClick={handleSave}
-          className="flex-1 bg-white text-black border-2 border-black px-4 py-3 font-bold text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0px_0px_#000]"
-        >
-          Save
-        </button>
-
-        {/* Post on X */}
-        <a
-          href={xUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="flex-1 bg-black text-white border-2 border-black px-4 py-3 font-bold text-sm uppercase tracking-widest hover:bg-[#FF9900] hover:text-black hover:border-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] text-center"
-        >
-          Post on X
-        </a>
-
-        {/* Cast on Farcaster */}
-        <a
-          href={castUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="flex-1 bg-[#8A63D2] text-white border-2 border-black px-4 py-3 font-bold text-sm uppercase tracking-widest hover:bg-[#FF9900] hover:text-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] text-center"
-        >
-          Cast
-        </a>
-      </div>
-
-      {/* Reset */}
+      {/* Start Over */}
       <button
         onClick={onReset}
-        className="text-xs font-mono uppercase tracking-[0.2em] opacity-50 hover:opacity-100 transition-opacity underline"
+        className="w-full bg-black text-[#FF9900] py-5 font-bold text-lg tracking-tight hover:opacity-80 transition-opacity"
       >
-        Try Again
+        Start Over →
       </button>
+
     </div>
   );
 };
